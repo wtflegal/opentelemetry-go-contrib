@@ -5,6 +5,7 @@ package otelhttp // import "go.opentelemetry.io/contrib/instrumentation/net/http
 
 import (
 	"context"
+	"errors"
 	"io"
 	"net/http"
 	"net/http/httptrace"
@@ -166,8 +167,14 @@ func (t *Transport) RoundTrip(r *http.Request) (*http.Response, error) {
 	)
 
 	if err != nil {
-		span.SetAttributes(otelsemconv.ErrorType(err))
-		span.SetStatus(codes.Error, err.Error())
+		// Skip recording context cancellation as errors — these are
+		// expected when users cancel requests.
+		if errors.Is(err, context.Canceled) {
+			span.SetStatus(codes.Unset, "")
+		} else {
+			span.SetAttributes(otelsemconv.ErrorType(err))
+			span.SetStatus(codes.Error, err.Error())
+		}
 		span.End()
 
 		return res, err
@@ -246,8 +253,11 @@ func (wb *wrappedBody) Read(b []byte) (int, error) {
 		wb.recordBytesRead()
 		wb.span.End()
 	default:
-		wb.span.SetAttributes(otelsemconv.ErrorType(err))
-		wb.span.SetStatus(codes.Error, err.Error())
+		// Skip recording context cancellation as errors.
+		if !errors.Is(err, context.Canceled) {
+			wb.span.SetAttributes(otelsemconv.ErrorType(err))
+			wb.span.SetStatus(codes.Error, err.Error())
+		}
 	}
 	return n, err
 }
