@@ -14,7 +14,7 @@ require (
 	go.opentelemetry.io/contrib/detectors/aws/lambda v0.66.0
 	go.opentelemetry.io/contrib/instrumentation/github.com/aws/aws-lambda-go/otellambda v0.66.0
 	go.opentelemetry.io/contrib/propagators/aws v1.41.0
-	go.opentelemetry.io/otel v1.41.1-0.20260303203755-5deb0d31ed71
+	go.opentelemetry.io/otel v1.41.1-0.20260306002212-0b82ded815a4
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.41.1-0.20260303203755-5deb0d31ed71
 	go.opentelemetry.io/otel/sdk v1.41.1-0.20260303203755-5deb0d31ed71
 	go.opentelemetry.io/otel/trace v1.41.1-0.20260303203755-5deb0d31ed71
